@@ -12,3 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2df1a9a6efa2be468f3933fd1f416c8, type: 3}
   m_Name: CRP Asset
   m_EditorClassIdentifier: 
+  _useDynamicBathing: 1
+  _useGPUInstancing: 1
+  _useSRPBatcher: 1

@@ -20,7 +20,7 @@ namespace CRP
             public static readonly ShaderTagId Unlit = new ShaderTagId("SRPDefaultUnlit");
         }
 
-        public void Render(ScriptableRenderContext context, Camera camera)
+        public void Render(ScriptableRenderContext context, Camera camera, bool useDynamicBatching, bool useGPUInstancing)
         {
             _context = context;
             _camera = camera;
@@ -32,7 +32,7 @@ namespace CRP
                 return;
 
             SetupCameraProperties();
-            DrawVisibleGeometry();
+            DrawVisibleGeometry(useDynamicBatching, useGPUInstancing);
             DrawUnsupportedShaders();
             DrawGizmos();
 
@@ -64,17 +64,22 @@ namespace CRP
             ExecuteBuffer();
         }
 
-        private void DrawVisibleGeometry()
+        private void DrawVisibleGeometry(bool useDynamicBatching, bool useGPUInstancing)
         {
             var sortingSettings = new SortingSettings(_camera);
+            
+            var unlitDrawingSettings = new DrawingSettings(ShaderTags.Unlit, sortingSettings)
+            {
+                enableDynamicBatching = useDynamicBatching,
+                enableInstancing      = useGPUInstancing
+            };
             
             //-- draw opaque unlit objects
             {
                 sortingSettings.criteria = SortingCriteria.CommonOpaque;
-                var drawingSettings   = new DrawingSettings(ShaderTags.Unlit, sortingSettings);
                 var filteringSettings = new FilteringSettings(RenderQueueRange.opaque);
 
-                _context.DrawRenderers(_cullingResults, ref drawingSettings, ref filteringSettings);
+                _context.DrawRenderers(_cullingResults, ref unlitDrawingSettings, ref filteringSettings);
             }
 
             _context.DrawSkybox(_camera);
@@ -82,10 +87,9 @@ namespace CRP
             //-- draw transparent unlit objects
             {
                 sortingSettings.criteria = SortingCriteria.CommonTransparent;
-                var drawingSettings   = new DrawingSettings(ShaderTags.Unlit, sortingSettings);
                 var filteringSettings = new FilteringSettings(RenderQueueRange.transparent);
                 
-                _context.DrawRenderers(_cullingResults, ref drawingSettings, ref filteringSettings);
+                _context.DrawRenderers(_cullingResults, ref unlitDrawingSettings, ref filteringSettings);
             }
         }
 
