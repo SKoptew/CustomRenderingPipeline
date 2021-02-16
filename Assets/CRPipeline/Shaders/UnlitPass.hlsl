@@ -1,7 +1,7 @@
 #ifndef _CRP_UNLIT_PASS_INCLUDED_
 #define _CRP_UNLIT_PASS_INCLUDED_
 
-#include "Assets/CRPipeline/SHaderLibrary/Common.hlsl"
+#include "Assets/CRPipeline/ShaderLibrary/Common.hlsl"
 
 struct Attributes
 {
