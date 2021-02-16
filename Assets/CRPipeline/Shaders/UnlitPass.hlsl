@@ -28,11 +28,12 @@ UNITY_INSTANCING_BUFFER_START(UnityPerMaterial)
 UNITY_INSTANCING_BUFFER_END(UnityPerMaterial)
 //---------------------------------------------------------------------------------------
 
+//-- vertex shader returns positionCS: homogeneous clip space, (x y z w). then, /= w => NDC
 Varyings UnlitPassVertex(Attributes Input)
 {
     Varyings Output;
     
-    UNITY_SETUP_INSTANCE_ID(Input);
+    UNITY_SETUP_INSTANCE_ID(Input);             // UnitySetupInstanceID(IN.instanceID); // unity_InstanceID = inputInstanceID + unity_BaseInstanceID;
     UNITY_TRANSFER_INSTANCE_ID(Input, Output);
     
     float3 positionWS = TransformObjectToWorld(Input.positionOS);    
@@ -51,9 +52,9 @@ float4 UnlitPassFragment(Varyings Input) : SV_TARGET
     float4 color = SAMPLE_TEXTURE2D(_ColorTexture, sampler_ColorTexture, Input.UV);
     color *= UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _Color);
     
-    #ifdef USE_ALPHA_CLIPPING
+#ifdef USE_ALPHA_CLIPPING
     clip(color.a - UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _Cutoff));
-    #endif
+#endif
     
     return color;
 }

@@ -2,8 +2,8 @@
 #define _CRP_LIT_PASS_INCLUDED_
 
 #include "Assets/CRPipeline/ShaderLibrary/Common.hlsl"
-#include "Assets/CRPipeline/ShaderLibrary/Surface.hlsl"
-#include "Assets/CRPipeline/ShaderLibrary/Light.hlsl"
+#include "Assets/CRPipeline/ShaderLibrary/SurfaceData.hlsl"
+#include "Assets/CRPipeline/ShaderLibrary/LightData.hlsl"
 #include "Assets/CRPipeline/ShaderLibrary/Lighting.hlsl"
 
 struct Attributes
@@ -57,11 +57,11 @@ float4 LitPassFragment(Varyings IN) : SV_TARGET
     float4 baseColor = SAMPLE_TEXTURE2D(_ColorTexture, sampler_ColorTexture, IN.UV)
                      * UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _Color);
                      
-    #ifdef USE_ALPHA_CLIPPING
+#ifdef USE_ALPHA_CLIPPING
     clip(baseColor.a - UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _Cutoff));
-    #endif
+#endif
     
-    Surface surface;
+    SurfaceData surface;
     surface.normal = normalize(IN.normalWS);
     surface.color  = baseColor.rgb;
     surface.alpha  = baseColor.a;

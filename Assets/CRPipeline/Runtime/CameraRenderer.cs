@@ -17,12 +17,6 @@ namespace CRP
             public const string ClearRT = "Clear RT";
         }
 
-        private static partial class CRPShaderTags
-        {
-            public static readonly ShaderTagId Unlit  = new ShaderTagId("SRPDefaultUnlit");
-            public static readonly ShaderTagId CRPLit = new ShaderTagId("CRPLit");            // Tags { "LightMode" = "CRPLit" }
-        }
-
         public void Render(ScriptableRenderContext context, Camera camera, bool useDynamicBatching, bool useGPUInstancing)
         {
             _context = context;
@@ -72,12 +66,12 @@ namespace CRP
         {
             var sortingSettings = new SortingSettings(_camera);
 
-            var drawingSettings = new DrawingSettings(CRPShaderTags.Unlit, sortingSettings)
+            var drawingSettings = new DrawingSettings(CRPShaderPassTags.Unlit, sortingSettings)
             {
                 enableDynamicBatching = useDynamicBatching,
                 enableInstancing      = useGPUInstancing
             };
-            drawingSettings.SetShaderPassName(1, CRPShaderTags.CRPLit);
+            drawingSettings.SetShaderPassName(1, CRPShaderPassTags.CRPLit);
 
             //-- draw opaque unlit objects
             {

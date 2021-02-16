@@ -12,19 +12,6 @@ namespace CRP
         
         private string ProfilingSampleName { get; set; }
 
-        partial class CRPShaderTags
-        {
-            public static readonly ShaderTagId[] Legacy =
-            {
-                new ShaderTagId("Always"),
-                new ShaderTagId("ForwardBase"),
-                new ShaderTagId("PrepassBase"),
-                new ShaderTagId("Vertex"),
-                new ShaderTagId("VertexLMRGBM"),
-                new ShaderTagId("VertexLM"), 
-            };
-        }
-
         partial void PrepareCommandBuffer()
         {
             Profiler.BeginSample("PrepareCommandBuffer");
@@ -43,13 +30,13 @@ namespace CRP
             if (_errorMaterial == null)
                 _errorMaterial = new Material(Shader.Find("Hidden/InternalErrorShader"));
             
-            var drawingSettings = new DrawingSettings(CRPShaderTags.Legacy[0], new SortingSettings(_camera))
+            var drawingSettings = new DrawingSettings(CRPShaderPassTags.Legacy[0], new SortingSettings(_camera))
             {
                 overrideMaterial = _errorMaterial
             };
             
-            for (int i = 1; i < CRPShaderTags.Legacy.Length; ++i)
-                drawingSettings.SetShaderPassName(i, CRPShaderTags.Legacy[i]);
+            for (int i = 1; i < CRPShaderPassTags.Legacy.Length; ++i)
+                drawingSettings.SetShaderPassName(i, CRPShaderPassTags.Legacy[i]);
             
             var filteringSettings = FilteringSettings.defaultValue;
             
