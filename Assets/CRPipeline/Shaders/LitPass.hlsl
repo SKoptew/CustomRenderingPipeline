@@ -4,6 +4,7 @@
 #include "Assets/CRPipeline/ShaderLibrary/Common.hlsl"
 #include "Assets/CRPipeline/ShaderLibrary/SurfaceData.hlsl"
 #include "Assets/CRPipeline/ShaderLibrary/LightData.hlsl"
+#include "Assets/CRPipeline/ShaderLibrary/BRDF.hlsl"
 #include "Assets/CRPipeline/ShaderLibrary/Lighting.hlsl"
 
 struct Attributes
@@ -17,8 +18,9 @@ struct Attributes
 struct Varyings
 {
     float4 positionOS : SV_POSITION;
-    float3 normalWS   : TEXCOORD0;
-    float2 UV         : TEXCOORD1;
+    float3 positionWS : TEXCOORD0;
+    float3 normalWS   : TEXCOORD1;
+    float2 UV         : TEXCOORD2;
     UNITY_VERTEX_INPUT_INSTANCE_ID
 };
 //---------------------------------------------------------------------------------------
@@ -29,6 +31,8 @@ SAMPLER(sampler_ColorTexture);
 UNITY_INSTANCING_BUFFER_START(UnityPerMaterial)
     UNITY_DEFINE_INSTANCED_PROP(float4, _ColorTexture_ST)
     UNITY_DEFINE_INSTANCED_PROP(float4, _Color)
+    UNITY_DEFINE_INSTANCED_PROP(float,  _Metallic)
+    UNITY_DEFINE_INSTANCED_PROP(float,  _Smoothness)
     UNITY_DEFINE_INSTANCED_PROP(float,  _Cutoff)
 UNITY_INSTANCING_BUFFER_END(UnityPerMaterial)
 //---------------------------------------------------------------------------------------
@@ -40,8 +44,8 @@ Varyings LitPassVertex(Attributes IN)
     UNITY_SETUP_INSTANCE_ID(IN);
     UNITY_TRANSFER_INSTANCE_ID(IN, OUT);
     
-    float3 positionWS = TransformObjectToWorld(IN.positionOS);    
-    OUT.positionOS = TransformWorldToHClip(positionWS);
+    OUT.positionWS = TransformObjectToWorld(IN.positionOS);
+    OUT.positionOS = TransformWorldToHClip(OUT.positionWS);    
     OUT.normalWS   = TransformObjectToWorldNormal(IN.normalOS);
     
     float4 uv_ST = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _ColorTexture_ST);
@@ -62,11 +66,16 @@ float4 LitPassFragment(Varyings IN) : SV_TARGET
 #endif
     
     SurfaceData surface;
-    surface.normal = normalize(IN.normalWS);
-    surface.color  = baseColor.rgb;
-    surface.alpha  = baseColor.a;
+    surface.normal        = normalize(IN.normalWS);
+    surface.viewDirection = normalize(_WorldSpaceCameraPos - IN.positionWS); 
+    surface.color         = baseColor.rgb;
+    surface.alpha         = baseColor.a;
+    surface.metallic      = _Metallic;
+    surface.smoothness    = _Smoothness; // perceptual smoothness
     
-    float3 color = GetLighting(surface);
+    BRDFData brdfData = GetBRDFData(surface);
+    
+    float3 color = GetLighting(surface, brdfData);
     
     return float4(color, surface.alpha);
 }

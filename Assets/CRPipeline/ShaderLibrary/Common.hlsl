@@ -1,6 +1,9 @@
 #ifndef _CRP_COMMON_INCLUDED_
 #define _CRP_COMMON_INCLUDED_
 
+#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"           //-- API header (like API/D3D11.hlsl), Macros.hlsl, Random.hlsl
+#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/CommonMaterial.hlsl"   //-- helpers for BRDF parameters
+
 #include "Assets/CRPipeline/ShaderLibrary/ShaderVariables.hlsl"
 
 #define UNITY_MATRIX_M   unity_ObjectToWorld
@@ -13,6 +16,9 @@
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/UnityInstancing.hlsl"
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/SpaceTransforms.hlsl"
 
-
+float Square(float x)
+{
+    return x*x;
+}
 
 #endif

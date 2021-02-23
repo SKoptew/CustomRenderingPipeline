@@ -2,8 +2,10 @@ Shader "CRP/Lit"
 {
     Properties
     {
-        _ColorTexture("Color texture", 2D) = "white" {}
-        _Color("Color", Color) = (0.5, 0.5, 0.5, 1.0)
+        _ColorTexture("Color texture", 2D)         = "white" {}
+        _Color       ("Color",         Color)      = (0.5, 0.5, 0.5, 1.0)
+        _Metallic    ("Metallic",      Range(0,1)) = 0.0
+        _Smoothness  ("Smoothness",    Range(0,1)) = 0.5
         
         [Toggle(USE_ALPHA_CLIPPING)] _AlphaTesting("Alpha clipping", Float) = 0
         _Cutoff("Cutoff", Range(0.0, 1.0)) = 0.5

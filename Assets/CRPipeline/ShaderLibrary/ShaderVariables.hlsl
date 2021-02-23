@@ -1,9 +1,6 @@
 #ifndef _CRP_SHADER_VARIABLES_INCLUDED_
 #define _CRP_SHADER_VARIABLES_INCLUDED_
 
-//-- include API header (like API/D3D11.hlsl), Macros.hlsl, Random.hlsl
-#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"
-
 CBUFFER_START(UnityPerDraw)
     float4x4 unity_ObjectToWorld;
     float4x4 unity_WorldToObject;
