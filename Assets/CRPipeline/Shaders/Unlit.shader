@@ -5,7 +5,7 @@ Shader "CRP/Unlit"
         _ColorTexture("Color texture", 2D) = "white" {}
         _Color("Color", Color) = (1.0, 1.0, 1.0, 1.0)
         
-        [Toggle(USE_ALPHA_CLIPPING)] _AlphaTesting("Alpha clipping", Float) = 0
+        [Toggle(USE_ALPHA_CLIPPING)] _AlphaClipping("Alpha clipping", Float) = 0
         _Cutoff("Cutoff", Range(0.0, 1.0)) = 0.5
         
         [Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend ("Src Blend", Float) = 1.0
@@ -37,4 +37,6 @@ Shader "CRP/Unlit"
             ENDHLSL        
         }
     }
+    
+    CustomEditor "CRP.Editor.LitUnlitShaderGUI"
 }

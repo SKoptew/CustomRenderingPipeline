@@ -14,10 +14,14 @@ float OneMinusReflectivity(float metallic)
     return range - metallic*range;
 }
 
-BRDFData GetBRDFData(SurfaceData surface)
+BRDFData GetBRDFData(SurfaceData surface, bool applyAlphaToDiffuse)
 {
     BRDFData brdfData;
     brdfData.diffuse   = surface.color * OneMinusReflectivity(surface.metallic);        // metals have black diffuse component
+    
+    if (applyAlphaToDiffuse)
+        brdfData.diffuse *= surface.alpha; // glass-like object. ONE, 1-SRCALPHA blending mode; specular lightint exists event on transparent parts - but diffuse must fade    
+    
     brdfData.specular  = lerp(DEFAULT_SPECULAR_VALUE, surface.color, surface.metallic); // and colored reflective component
     brdfData.roughness = PerceptualSmoothnessToRoughness(surface.smoothness);
     

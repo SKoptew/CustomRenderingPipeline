@@ -7,13 +7,13 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: UnlitAlphaTest
-  m_Shader: {fileID: 4800000, guid: 6ccf7d0d155008147a868db5937dd8c9, type: 3}
-  m_ShaderKeywords: USE_ALPHA_CLIPPING _ALPHA_TESTING
+  m_Name: LitTransparentGlass
+  m_Shader: {fileID: 4800000, guid: 4cf5f3a4e8b39094b942c6d72da1f86f, type: 3}
+  m_ShaderKeywords: PREMULTIPLY_ALPHA
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 2450
+  m_CustomRenderQueue: 3000
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
@@ -44,7 +44,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 1d111fc60c65db04e8e528be24145f8f, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -60,12 +60,12 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _AlphaClipping: 1
-    - _AlphaTesting: 1
+    - _AlphaClipping: 0
+    - _AlphaTesting: 0
     - _BumpScale: 1
-    - _Cutoff: 0.6
+    - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
-    - _DstBlend: 0
+    - _DstBlend: 10
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -73,11 +73,13 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
+    - _PreMulAlpha: 1
+    - _Smoothness: 0.8
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
-    - _ZWrite: 1
+    - _ZWrite: 0
     m_Colors:
-    - _Color: {r: 0.31996897, g: 0.509434, b: 0.18503025, a: 1}
+    - _Color: {r: 0, g: 0.45454544, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}

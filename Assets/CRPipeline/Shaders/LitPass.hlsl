@@ -73,11 +73,15 @@ float4 LitPassFragment(Varyings IN) : SV_TARGET
     surface.metallic      = _Metallic;
     surface.smoothness    = _Smoothness; // perceptual smoothness
     
-    BRDFData brdfData = GetBRDFData(surface);
+#ifdef PREMULTIPLY_ALPHA    
+    BRDFData brdfData = GetBRDFData(surface, true);
+#else
+    BRDFData brdfData = GetBRDFData(surface, false);
+#endif
     
     float3 color = GetLighting(surface, brdfData);
     
-    return float4(color, surface.alpha);
+    return float4(color, baseColor.a);
 }
 
 #endif

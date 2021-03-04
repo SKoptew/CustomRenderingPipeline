@@ -7,8 +7,10 @@ Shader "CRP/Lit"
         _Metallic    ("Metallic",      Range(0,1)) = 0.0
         _Smoothness  ("Smoothness",    Range(0,1)) = 0.5
         
-        [Toggle(USE_ALPHA_CLIPPING)] _AlphaTesting("Alpha clipping", Float) = 0
+        [Toggle(USE_ALPHA_CLIPPING)] _AlphaClipping("Alpha clipping", Float) = 0
         _Cutoff("Cutoff", Range(0.0, 1.0)) = 0.5
+        
+        [Toggle(PREMULTIPLY_ALPHA)] _PreMulAlpha("Premultiply Alpha", Float) = 0
         
         [Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend ("Src Blend", Float) = 1.0
         [Enum(UnityEngine.Rendering.BlendMode)] _DstBlend ("Dst Blend", Float) = 1.0        
@@ -34,6 +36,7 @@ Shader "CRP/Lit"
             #pragma target 3.5            
             #pragma multi_compile_instancing
             #pragma shader_feature USE_ALPHA_CLIPPING
+            #pragma shader_feature PREMULTIPLY_ALPHA
             //#pragma instancing_options assumeuniformscaling
             
             #pragma vertex   LitPassVertex
@@ -43,4 +46,6 @@ Shader "CRP/Lit"
             ENDHLSL        
         }
     }
+    
+    CustomEditor "CRP.Editor.LitUnlitShaderGUI"
 }
