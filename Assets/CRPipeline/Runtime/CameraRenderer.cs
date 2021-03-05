@@ -14,10 +14,11 @@ namespace CRP
 
         private static class ProfilingSampleNames
         {
-            public const string ClearRT = "Clear RT";
+            public const string ClearRT       = "Clear RT";
+            public const string LightingSetup = "Lighting setup";
         }
 
-        public void Render(ScriptableRenderContext context, Camera camera, bool useDynamicBatching, bool useGPUInstancing)
+        public void Render(ScriptableRenderContext context, Camera camera, bool useDynamicBatching, bool useGPUInstancing, ShadowSettings shadowSettings)
         {
             _context = context;
             _camera = camera;
@@ -25,15 +26,21 @@ namespace CRP
             PrepareCommandBuffer();
             PrepareForSceneWindow();
 
-            if (!Cull())
+            if (!Cull(shadowSettings.maxDistance))
                 return;
+            
+            _cmd.BeginSample(ProfilingSampleNames.LightingSetup); // place shadows frame debugger entry inside the camera's
+            ExecuteBuffer();
+            _lighting.Setup(context, _cullingResults, shadowSettings);
+            _cmd.EndSample(ProfilingSampleNames.LightingSetup);
 
             SetupCameraProperties();
-            _lighting.Setup(context, _cullingResults);
             DrawVisibleGeometry(useDynamicBatching, useGPUInstancing);
             DrawUnsupportedShaders();
             DrawGizmos();
 
+            _lighting.Cleanup();
+            
             Submit();
         }
 
@@ -100,10 +107,11 @@ namespace CRP
             _context.Submit();
         }
 
-        private bool Cull()
+        private bool Cull(float maxShadowDistance)
         {
             if (_camera.TryGetCullingParameters(out var cullingParameters))
             {
+                cullingParameters.shadowDistance = Mathf.Min(maxShadowDistance, _camera.farClipPlane);
                 _cullingResults = _context.Cull(ref cullingParameters);
                 return true;
             }

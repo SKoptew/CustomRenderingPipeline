@@ -3,6 +3,7 @@
 
 struct SurfaceData
 {
+    float3 positionWS;
     float3 normal;
     float3 viewDirection;
     float3 color;

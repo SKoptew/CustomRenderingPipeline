@@ -12,7 +12,7 @@ struct Attributes
 
 struct Varyings
 {
-    float4 positionOS : SV_POSITION;
+    float4 positionCS : SV_POSITION;
     float2 UV         : TEXCOORD0;
     UNITY_VERTEX_INPUT_INSTANCE_ID
 };
@@ -37,7 +37,7 @@ Varyings UnlitPassVertex(Attributes Input)
     UNITY_TRANSFER_INSTANCE_ID(Input, Output);
     
     float3 positionWS = TransformObjectToWorld(Input.positionOS);    
-    Output.positionOS = TransformWorldToHClip(positionWS);
+    Output.positionCS = TransformWorldToHClip(positionWS);
     
     float4 uv_ST = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _ColorTexture_ST);
     Output.UV = Input.UV * uv_ST.xy + uv_ST.zw;

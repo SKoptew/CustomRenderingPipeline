@@ -8,7 +8,7 @@ float3 IncomingLight(SurfaceData surface, LightData light)
 
 float3 GetLighting(SurfaceData surface, BRDFData brdf, LightData light)
 {
-    return DirectBRDF(surface, brdf, light) * IncomingLight(surface, light);
+    return DirectBRDF(surface, brdf, light) * IncomingLight(surface, light) * light.attenuation;
 }
 
 float3 GetLighting(SurfaceData surface, BRDFData brdf)
@@ -18,7 +18,8 @@ float3 GetLighting(SurfaceData surface, BRDFData brdf)
     const int dirLightCount = GetDirectionalLightCount();
     for (int i = 0; i < dirLightCount; ++i)
     {
-        color += GetLighting(surface, brdf, GetDirectionalLight(i));
+        LightData light = GetDirectionalLight(i, surface.positionWS);
+        color += GetLighting(surface, brdf, light);
     }
     
     return color;

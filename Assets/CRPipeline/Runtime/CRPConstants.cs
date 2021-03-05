@@ -26,5 +26,8 @@ namespace CRP
         public static readonly int _DirectionalLightCount      = Shader.PropertyToID("_DirectionalLightCount");
         public static readonly int _DirectionalLightColors     = Shader.PropertyToID("_DirectionalLightColors");
         public static readonly int _DirectionalLightDirections = Shader.PropertyToID("_DirectionalLightDirections");
+        public static readonly int _DirectionalLightShadowData = Shader.PropertyToID("_DirectionalLightShadowData");
+        public static readonly int _DirectionalShadowAtlas     = Shader.PropertyToID("_DirectionalShadowAtlas");
+        public static readonly int _DirectionalShadowMatrices  = Shader.PropertyToID("_DirectionalShadowMatrices");
     }
 }

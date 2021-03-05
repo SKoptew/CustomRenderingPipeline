@@ -3,6 +3,7 @@
 
 #include "Assets/CRPipeline/ShaderLibrary/Common.hlsl"
 #include "Assets/CRPipeline/ShaderLibrary/SurfaceData.hlsl"
+#include "Assets/CRPipeline/ShaderLibrary/Shadows.hlsl"
 #include "Assets/CRPipeline/ShaderLibrary/LightData.hlsl"
 #include "Assets/CRPipeline/ShaderLibrary/BRDF.hlsl"
 #include "Assets/CRPipeline/ShaderLibrary/Lighting.hlsl"
@@ -17,7 +18,7 @@ struct Attributes
 
 struct Varyings
 {
-    float4 positionOS : SV_POSITION;
+    float4 positionCS : SV_POSITION;
     float3 positionWS : TEXCOORD0;
     float3 normalWS   : TEXCOORD1;
     float2 UV         : TEXCOORD2;
@@ -45,7 +46,7 @@ Varyings LitPassVertex(Attributes IN)
     UNITY_TRANSFER_INSTANCE_ID(IN, OUT);
     
     OUT.positionWS = TransformObjectToWorld(IN.positionOS);
-    OUT.positionOS = TransformWorldToHClip(OUT.positionWS);    
+    OUT.positionCS = TransformWorldToHClip(OUT.positionWS);    
     OUT.normalWS   = TransformObjectToWorldNormal(IN.normalOS);
     
     float4 uv_ST = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _ColorTexture_ST);
@@ -66,6 +67,7 @@ float4 LitPassFragment(Varyings IN) : SV_TARGET
 #endif
     
     SurfaceData surface;
+    surface.positionWS    = IN.positionWS;
     surface.normal        = normalize(IN.normalWS);
     surface.viewDirection = normalize(_WorldSpaceCameraPos - IN.positionWS); 
     surface.color         = baseColor.rgb;

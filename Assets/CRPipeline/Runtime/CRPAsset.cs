@@ -10,10 +10,13 @@ namespace CRP
         private bool _useDynamicBathing = true,
                      _useGPUInstancing  = true,
                      _useSRPBatcher     = true;
+
+        [SerializeField] 
+        private ShadowSettings _shadowSettings;
         
         protected override RenderPipeline CreatePipeline()
         {
-            return new CRPipeline(_useDynamicBathing, _useGPUInstancing, _useSRPBatcher);
+            return new CRPipeline(_useDynamicBathing, _useGPUInstancing, _useSRPBatcher, _shadowSettings);
         }
     }
 }

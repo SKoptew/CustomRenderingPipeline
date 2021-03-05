@@ -15,3 +15,7 @@ MonoBehaviour:
   _useDynamicBathing: 1
   _useGPUInstancing: 1
   _useSRPBatcher: 1
+  _shadowSettings:
+    maxDistance: 50
+    directional:
+      atlasSize: 2048
