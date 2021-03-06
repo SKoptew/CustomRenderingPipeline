@@ -14,11 +14,12 @@ float3 GetLighting(SurfaceData surface, BRDFData brdf, LightData light)
 float3 GetLighting(SurfaceData surface, BRDFData brdf)
 {
     float3 color = 0.0;
+    ShadowData shadowData = GetShadowData(surface.positionWS, surface.depth);
     
     const int dirLightCount = GetDirectionalLightCount();
     for (int i = 0; i < dirLightCount; ++i)
     {
-        LightData light = GetDirectionalLight(i, surface.positionWS);
+        LightData light = GetDirectionalLight(i, surface.positionWS, shadowData);
         color += GetLighting(surface, brdf, light);
     }
     
