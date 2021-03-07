@@ -32,5 +32,6 @@ namespace CRP
         public static readonly int _ShadowDistanceFade         = Shader.PropertyToID("_ShadowDistanceFade");
         public static readonly int _CascadeCount               = Shader.PropertyToID("_CascadeCount");
         public static readonly int _CascadeCullingSpheres      = Shader.PropertyToID("_CascadeCullingSpheres");
+        public static readonly int _CascadeData                = Shader.PropertyToID("_CascadeData");
     }
 }

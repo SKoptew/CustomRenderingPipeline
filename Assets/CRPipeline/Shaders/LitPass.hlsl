@@ -67,7 +67,7 @@ float4 LitPassFragment(Varyings IN) : SV_TARGET
 #endif
     
     SurfaceData surface;
-    surface.positionWS    = IN.positionWS;
+    surface.position      = IN.positionWS;
     surface.normal        = normalize(IN.normalWS);
     surface.viewDirection = normalize(_WorldSpaceCameraPos - IN.positionWS);
     surface.depth         = -TransformWorldToView(IN.positionWS).z;

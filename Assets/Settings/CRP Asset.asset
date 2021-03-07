@@ -24,3 +24,4 @@ MonoBehaviour:
       cascadeRatio1: 0.24
       cascadeRatio2: 0.53
       cascadeRatio3: 0.73
+      cascadeFade: 0.1

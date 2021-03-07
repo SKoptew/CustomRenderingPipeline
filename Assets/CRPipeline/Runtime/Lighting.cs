@@ -11,7 +11,7 @@ namespace CRP
         private const int MaxDirLightCount = 4;
         private static Vector4[] _dirLightColors     = new Vector4[MaxDirLightCount];
         private static Vector4[] _dirLightDirections = new Vector4[MaxDirLightCount];
-        private static Vector4[] _dirLightShadowData = new Vector4[MaxDirLightCount]; // shadow strength; shadow atlas tile index for Cascade[0]
+        private static Vector4[] _dirLightShadowData = new Vector4[MaxDirLightCount]; // shadow strength; shadow atlas tile index for Cascade[0]; normal bias
         
         private Shadows _shadows = new Shadows();
         
