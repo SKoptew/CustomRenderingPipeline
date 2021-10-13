@@ -21,7 +21,6 @@ namespace CRP
         {
             public int   visibleLightIndex; // idx of corresponding light in cullingResults.visibleLights[]
             public float slopeScaleBias;
-            public float normalBias;
         }
         
         private const int MaxDirectionalShadowCount = 4;
@@ -51,8 +50,7 @@ namespace CRP
                 _directionalShadows[_directionalShadowCount] = new DirectionalShadow
                 {
                     visibleLightIndex = visibleLightIndex,
-                    slopeScaleBias    = light.shadowBias,
-                    normalBias        = light.shadowNormalBias
+                    slopeScaleBias    = light.shadowBias
                 };
                 
                 return new Vector3(
@@ -90,7 +88,7 @@ namespace CRP
                 _cmdBuffer.GetTemporaryRT(
                     CRPShaderIDs._DirectionalShadowAtlas, 
                     atlasSize, atlasSize, 
-                    24, 
+                    32, 
                     FilterMode.Bilinear, 
                     RenderTextureFormat.Shadowmap);
                 
@@ -152,7 +150,7 @@ namespace CRP
                 _cmdBuffer.SetGlobalDepthBias(0f, shadow.slopeScaleBias);
                 ExecuteAndClearCmdBuffer();
                 
-                _context.DrawShadows(ref shadowSettings);
+                _context.DrawShadows(ref shadowSettings); //-- render objects with materials that have "ShadowCaster" pass
                 _cmdBuffer.SetGlobalDepthBias(0f, 0f);
             }
         }

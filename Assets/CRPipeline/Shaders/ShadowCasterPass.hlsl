@@ -49,11 +49,11 @@ void ShadowCasterPassFragment(Varyings IN)
 #ifdef USE_ALPHA_CLIPPING
     UNITY_SETUP_INSTANCE_ID(IN);
     
-    float4 baseColor = SAMPLE_TEXTURE2D(_ColorTexture, sampler_ColorTexture, IN.UV)
-                     * UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _Color);
+    float alphaValue = SAMPLE_TEXTURE2D(_ColorTexture, sampler_ColorTexture, IN.UV).a
+                     * UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _Color).a;
                      
 
-    clip(baseColor.a - UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _Cutoff));
+    clip(alphaValue - UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _Cutoff));
 #endif
 }
 
