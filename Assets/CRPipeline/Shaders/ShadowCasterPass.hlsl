@@ -36,7 +36,16 @@ Varyings ShadowCasterPassVertex(Attributes IN)
     UNITY_TRANSFER_INSTANCE_ID(IN, OUT);
     
     float3 positionWS = TransformObjectToWorld(IN.positionOS);
-    OUT.positionCS    = TransformWorldToHClip(positionWS);    
+    OUT.positionCS    = TransformWorldToHClip(positionWS);
+
+    // when rendering shadow casters for a dirLight, the near plane is moved forward as much as possible
+    // this increased depth precision, but shadow casters that aren't in view of the camere can end up of the near plane
+    // which causes them to get clipped. => clamp their positionCS to the near plane (=> flattening shadow casters)
+    #if UNITY_REVERSED_Z
+        OUT.positionCS.z = min(OUT.positionCS.z, OUT.positionCS.w * UNITY_NEAR_CLIP_VALUE);
+    #else
+        OUT.positionCS.z = max(OUT.positionCS.z, OUT.positionCS.w * UNITY_NEAR_CLIP_VALUE);
+    #endif
     
     float4 uv_ST = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _ColorTexture_ST);
     OUT.UV = IN.UV * uv_ST.xy + uv_ST.zw;

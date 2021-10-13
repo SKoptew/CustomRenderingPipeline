@@ -21,6 +21,7 @@ namespace CRP
         {
             public int   visibleLightIndex; // idx of corresponding light in cullingResults.visibleLights[]
             public float slopeScaleBias;
+            public float nearPlaneOffset;
         }
         
         private const int MaxDirectionalShadowCount = 4;
@@ -50,7 +51,8 @@ namespace CRP
                 _directionalShadows[_directionalShadowCount] = new DirectionalShadow
                 {
                     visibleLightIndex = visibleLightIndex,
-                    slopeScaleBias    = light.shadowBias
+                    slopeScaleBias    = light.shadowBias,
+                    nearPlaneOffset   = light.shadowNearPlane
                 };
                 
                 return new Vector3(
@@ -132,7 +134,7 @@ namespace CRP
                     shadow.visibleLightIndex,
                     cascadeIdx, cascadeCount, ratios,
                     tileSize,
-                    0f,
+                    shadow.nearPlaneOffset,
                     out var viewMatrix,
                     out var projMatrix,
                     out var shadowSplitData);
