@@ -5,17 +5,24 @@ namespace CRP
 {
     public class Shadows
     {
-        private const string BufferName = "Shadows";
-        private CommandBuffer _cmdBuffer = new CommandBuffer {name = BufferName};
-        
         private static class ProfilingSampleNames
         {
             public const string DirectionalShadows = "Directional shadows";
         }
 
-        private ScriptableRenderContext _context;
+        private static string[] DirectionalFilterKeywords =
+        {
+            "_DIRECTIONAL_PCF3",
+            "_DIRECTIONAL_PCF5",
+            "_DIRECTIONAL_PCF7"
+        };
+
+        private ScriptableRenderContext _renderContext;
         private CullingResults          _cullingResults;
         private ShadowSettings          _shadowSettings;
+        
+        private const string BufferName = "Shadows";
+        private CommandBuffer _cmdBuffer = new CommandBuffer {name = BufferName};
 
         struct DirectionalShadow
         {
@@ -34,9 +41,9 @@ namespace CRP
         private Vector4[]           _cascadeData               = new Vector4          [MaxCascades]; // 1/cullingSphere.w^2
 
 
-        public void Init(ScriptableRenderContext context, CullingResults cullingResults, ShadowSettings shadowSettings)
+        public void Init(ScriptableRenderContext renderContext, CullingResults cullingResults, ShadowSettings shadowSettings)
         {
-            _context        = context;
+            _renderContext  = renderContext;
             _cullingResults = cullingResults;
             _shadowSettings = shadowSettings;
             _directionalShadowCount = 0;
@@ -66,7 +73,7 @@ namespace CRP
 
         public void Render()
         {
-            RenderDirectionalShadows();
+            RenderDirectionalShadows(_renderContext, _cmdBuffer);
         }
 
         public void Cleanup()
@@ -74,28 +81,28 @@ namespace CRP
             if (_directionalShadowCount > 0)
             {
                 _cmdBuffer.ReleaseTemporaryRT(CRPShaderIDs._DirectionalShadowAtlas);
-                ExecuteAndClearCmdBuffer();
+                ExecuteAndClearCmdBuffer(_renderContext, _cmdBuffer);
             }
         }
 
-        private void RenderDirectionalShadows()
+        private void RenderDirectionalShadows(ScriptableRenderContext renderContext, CommandBuffer cmd)
         {
             if (_directionalShadowCount <= 0)
                 return;
             
-            _cmdBuffer.BeginSample(ProfilingSampleNames.DirectionalShadows);
+            cmd.BeginSample(ProfilingSampleNames.DirectionalShadows);
             {
                 //-- allocate or get (if already exists) square RenderTexture for dir shadow atlas
                 int atlasSize = (int) _shadowSettings.directional.atlasSize;
-                _cmdBuffer.GetTemporaryRT(
+                cmd.GetTemporaryRT(
                     CRPShaderIDs._DirectionalShadowAtlas, 
                     atlasSize, atlasSize, 
                     32, 
                     FilterMode.Bilinear, 
                     RenderTextureFormat.Shadowmap);
                 
-                _cmdBuffer.SetRenderTarget(CRPShaderIDs._DirectionalShadowAtlas, RenderBufferLoadAction.DontCare, RenderBufferStoreAction.Store);
-                _cmdBuffer.ClearRenderTarget(true, false, Color.clear);
+                cmd.SetRenderTarget(CRPShaderIDs._DirectionalShadowAtlas, RenderBufferLoadAction.DontCare, RenderBufferStoreAction.Store);
+                cmd.ClearRenderTarget(true, false, Color.clear);
 
                 
                 int tiles = _directionalShadowCount * _shadowSettings.directional.cascadeCount;
@@ -105,21 +112,24 @@ namespace CRP
                 //-- render shadow texture atlas; store tiles matrices
                 for (int i = 0; i < _directionalShadowCount; ++i)
                 {
-                    RenderDirectionalShadow(i, split, tileSize);
+                    RenderDirectionalShadow(renderContext, cmd, i, split, tileSize);
                 }
                 
-                _cmdBuffer.SetGlobalVector     (CRPShaderIDs._ShadowDistanceFade,  CalcShadowDistanceFadeParameters(_shadowSettings));
-                _cmdBuffer.SetGlobalMatrixArray(CRPShaderIDs._DirectionalShadowMatrices, _directionalShadowMatrices);
-                _cmdBuffer.SetGlobalInt        (CRPShaderIDs._CascadeCount,        _shadowSettings.directional.cascadeCount);
-                _cmdBuffer.SetGlobalVectorArray(CRPShaderIDs._CascadeCullingSpheres,     _cascadeCullingSpheres);
-                _cmdBuffer.SetGlobalVectorArray(CRPShaderIDs._CascadeData,               _cascadeData);
+                cmd.SetGlobalVector     (CRPShaderIDs._ShadowAtlasSize, new Vector4(atlasSize, 1f/atlasSize));
+                cmd.SetGlobalVector     (CRPShaderIDs._ShadowDistanceFade,  CalcShadowDistanceFadeParameters(_shadowSettings));
+                cmd.SetGlobalMatrixArray(CRPShaderIDs._DirectionalShadowMatrices, _directionalShadowMatrices);
+                cmd.SetGlobalInt        (CRPShaderIDs._CascadeCount,        _shadowSettings.directional.cascadeCount);
+                cmd.SetGlobalVectorArray(CRPShaderIDs._CascadeCullingSpheres,     _cascadeCullingSpheres);
+                cmd.SetGlobalVectorArray(CRPShaderIDs._CascadeData,               _cascadeData);
+                
+                SetKeywords(_shadowSettings.directional.filterMode, cmd);
             }
-            _cmdBuffer.EndSample(ProfilingSampleNames.DirectionalShadows);
+            cmd.EndSample(ProfilingSampleNames.DirectionalShadows);
             
-            ExecuteAndClearCmdBuffer();
+            ExecuteAndClearCmdBuffer(renderContext, cmd);
         }
 
-        private void RenderDirectionalShadow(int index, int split, int tileSize)
+        private void RenderDirectionalShadow(ScriptableRenderContext renderContext, CommandBuffer cmd, int index, int split, int tileSize)
         {
             var shadow = _directionalShadows[index];
             var shadowSettings = new ShadowDrawingSettings(_cullingResults, shadow.visibleLightIndex);
@@ -146,25 +156,28 @@ namespace CRP
                     SetCascadeData(cascadeIdx, shadowSplitData.cullingSphere, tileSize);
 
                 int tileIndex = tileOffset + cascadeIdx;
-                _directionalShadowMatrices[tileIndex] = ConvertToAtlasMatrix(projMatrix * viewMatrix, SetTileViewport(_cmdBuffer, tileIndex, split, tileSize), split);
+                _directionalShadowMatrices[tileIndex] = ConvertToAtlasMatrix(projMatrix * viewMatrix, SetTileViewport(cmd, tileIndex, split, tileSize), split);
                 
-                _cmdBuffer.SetViewProjectionMatrices(viewMatrix, projMatrix);
-                _cmdBuffer.SetGlobalDepthBias(0f, shadow.slopeScaleBias);
-                ExecuteAndClearCmdBuffer();
+                cmd.SetViewProjectionMatrices(viewMatrix, projMatrix);
+                cmd.SetGlobalDepthBias(0f, shadow.slopeScaleBias);
+                ExecuteAndClearCmdBuffer(renderContext, cmd);
                 
-                _context.DrawShadows(ref shadowSettings); //-- render objects with materials that have "ShadowCaster" pass
-                _cmdBuffer.SetGlobalDepthBias(0f, 0f);
+                renderContext.DrawShadows(ref shadowSettings); //-- render objects with materials that have "ShadowCaster" pass
+                cmd.SetGlobalDepthBias(0f, 0f);
             }
         }
 
         private void SetCascadeData(int cascadeIdx, Vector4 cullingSphere, float tileSize)
         {
-            float texelSize = 2f * cullingSphere.w / tileSize;
+            float texelSize  = 2f * cullingSphere.w / tileSize;
+            float filterSize = texelSize * ((int) _shadowSettings.directional.filterMode + 1);
+
+            cullingSphere.w -= filterSize; // prevent sampling outside of the cascade's culling sphere
             cullingSphere.w *= cullingSphere.w;
             
             _cascadeData[cascadeIdx] = new Vector4(
                 1f / cullingSphere.w, 
-                texelSize * Mathf.Sqrt(2f),
+                filterSize * Mathf.Sqrt(2f),
                 0, 
                 0);
 
@@ -194,8 +207,21 @@ namespace CRP
 
             return offset;
         }
+
+        static void SetKeywords(ShadowSettings.ShadowFilterMode mode, CommandBuffer cmd)
+        {
+            int enabledIndex = (int)mode - 1;
+
+            for (int i = 0; i < DirectionalFilterKeywords.Length; ++i)
+            {
+                if (i == enabledIndex)
+                    cmd.EnableShaderKeyword(DirectionalFilterKeywords[i]);
+                else
+                    cmd.DisableShaderKeyword(DirectionalFilterKeywords[i]);
+            }
+        }
         
-        Matrix4x4 ConvertToAtlasMatrix(Matrix4x4 m, Vector2 offset, int split) 
+        static Matrix4x4 ConvertToAtlasMatrix(Matrix4x4 m, Vector2 offset, int split) 
         {
             // clip space: [-1..1] => UV space: [0..0]
             // scale and offset according to tile number
@@ -227,10 +253,10 @@ namespace CRP
             return m;
         }
 
-        private void ExecuteAndClearCmdBuffer()
+        private static void ExecuteAndClearCmdBuffer(ScriptableRenderContext renderContext, CommandBuffer cmd)
         {
-            _context.ExecuteCommandBuffer(_cmdBuffer);
-            _cmdBuffer.Clear();
+            renderContext.ExecuteCommandBuffer(cmd);
+            cmd.Clear();
         }
     }
 }

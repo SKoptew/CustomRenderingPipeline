@@ -29,6 +29,7 @@ namespace CRP
         public static readonly int _DirectionalLightShadowData = Shader.PropertyToID("_DirectionalLightShadowData");
         public static readonly int _DirectionalShadowAtlas     = Shader.PropertyToID("_DirectionalShadowAtlas");
         public static readonly int _DirectionalShadowMatrices  = Shader.PropertyToID("_DirectionalShadowMatrices");
+        public static readonly int _ShadowAtlasSize            = Shader.PropertyToID("_ShadowAtlasSize");
         public static readonly int _ShadowDistanceFade         = Shader.PropertyToID("_ShadowDistanceFade");
         public static readonly int _CascadeCount               = Shader.PropertyToID("_CascadeCount");
         public static readonly int _CascadeCullingSpheres      = Shader.PropertyToID("_CascadeCullingSpheres");

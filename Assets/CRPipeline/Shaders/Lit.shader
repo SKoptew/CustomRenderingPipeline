@@ -37,6 +37,7 @@ Shader "CRP/Lit"
             #pragma multi_compile_instancing
             #pragma shader_feature USE_ALPHA_CLIPPING
             #pragma shader_feature PREMULTIPLY_ALPHA
+            #pragma shader_feature _ _DIRECTIONAL_PCF3 _DIRECTIONAL_PCF5 _DIRECTIONAL_PCF7
             //#pragma instancing_options assumeuniformscaling
             
             #pragma vertex   LitPassVertex

@@ -29,6 +29,7 @@ Shader "CRP/Unlit"
             HLSLPROGRAM
             #pragma multi_compile_instancing
             #pragma shader_feature USE_ALPHA_CLIPPING
+            #pragma shader_feature _ _DIRECTIONAL_PCF3 _DIRECTIONAL_PCF5 _DIRECTIONAL_PCF7
             
             #pragma vertex   UnlitPassVertex
             #pragma fragment UnlitPassFragment
