@@ -141,9 +141,10 @@ namespace CRP
             var shadow = _directionalShadows[index];
             var shadowSettings = new ShadowDrawingSettings(_cullingResults, shadow.visibleLightIndex);
             
-            int cascadeCount = _shadowSettings.directional.cascadeCount;
-            int tileOffset = index * cascadeCount;
-            Vector3 ratios = _shadowSettings.directional.CascadeRatios;
+            int     cascadeCount = _shadowSettings.directional.cascadeCount;
+            int     tileOffset   = index * cascadeCount;
+            Vector3 ratios       = _shadowSettings.directional.CascadeRatios;
+            float cullingFactor = Mathf.Max(0f, 0.8f - _shadowSettings.directional.cascadeFade);
 
             for (int cascadeIdx = 0; cascadeIdx < cascadeCount; ++cascadeIdx)
             {
@@ -155,7 +156,8 @@ namespace CRP
                     out var viewMatrix,
                     out var projMatrix,
                     out var shadowSplitData);
-                
+
+                shadowSplitData.shadowCascadeBlendCullingFactor = cullingFactor; // factor that modulated the radius of the previous cascade used for culling
                 shadowSettings.splitData = shadowSplitData;
 
                 //-- spheres for all dir light are the same => store values for first dir light
