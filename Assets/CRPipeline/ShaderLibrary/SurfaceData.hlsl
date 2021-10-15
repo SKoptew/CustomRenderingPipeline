@@ -11,6 +11,7 @@ struct SurfaceData
     float  alpha;
     float  metallic;
     float  smoothness;
+    float  dither; // used for _CASCADE_BLEND_DITHER
 };
 
 #endif

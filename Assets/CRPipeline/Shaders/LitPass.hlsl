@@ -75,6 +75,9 @@ float4 LitPassFragment(Varyings IN) : SV_TARGET
     surface.alpha         = baseColor.a;
     surface.metallic      = _Metallic;
     surface.smoothness    = _Smoothness; // perceptual smoothness
+#ifdef _CASCADE_BLEND_DITHER
+    surface.dither        = InterleavedGradientNoise(IN.positionCS.xy, 0);
+#endif
     
 #ifdef PREMULTIPLY_ALPHA    
     BRDFData brdfData = GetBRDFData(surface, true);

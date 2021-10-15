@@ -17,6 +17,12 @@ namespace CRP
             "_DIRECTIONAL_PCF7"
         };
 
+        private static string[] CascadeBlendKeywords =
+        {
+            "_CASCADE_BLEND_SOFT",
+            "_CASCADE_BLEND_DITHER"
+        };
+
         private ScriptableRenderContext _renderContext;
         private CullingResults          _cullingResults;
         private ShadowSettings          _shadowSettings;
@@ -122,7 +128,8 @@ namespace CRP
                 cmd.SetGlobalVectorArray(CRPShaderIDs._CascadeCullingSpheres,     _cascadeCullingSpheres);
                 cmd.SetGlobalVectorArray(CRPShaderIDs._CascadeData,               _cascadeData);
                 
-                SetKeywords(_shadowSettings.directional.filterMode, cmd);
+                SetKeywords(cmd, DirectionalFilterKeywords, (int)_shadowSettings.directional.filterMode   - 1);
+                SetKeywords(cmd, CascadeBlendKeywords,      (int)_shadowSettings.directional.cascadeBlend - 1);
             }
             cmd.EndSample(ProfilingSampleNames.DirectionalShadows);
             
@@ -208,16 +215,14 @@ namespace CRP
             return offset;
         }
 
-        static void SetKeywords(ShadowSettings.ShadowFilterMode mode, CommandBuffer cmd)
+        static void SetKeywords(CommandBuffer cmd, string[] keywords, int enabledIdx)
         {
-            int enabledIndex = (int)mode - 1;
-
-            for (int i = 0; i < DirectionalFilterKeywords.Length; ++i)
+            for (int i = 0; i < keywords.Length; ++i)
             {
-                if (i == enabledIndex)
-                    cmd.EnableShaderKeyword(DirectionalFilterKeywords[i]);
+                if (i == enabledIdx)
+                    cmd.EnableShaderKeyword(keywords[i]);
                 else
-                    cmd.DisableShaderKeyword(DirectionalFilterKeywords[i]);
+                    cmd.DisableShaderKeyword(keywords[i]);
             }
         }
         

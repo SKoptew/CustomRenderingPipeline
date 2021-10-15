@@ -15,11 +15,17 @@ namespace CRP
             PCF2x2 = 0, PCF3x3, PCF5x5, PCF7x7
         }
 
+        public enum CascadeBlendMode
+        {
+            Hard, Soft, Dithering
+        }
+
         [System.Serializable]
         public struct Directional
         {
             public TextureSize      atlasSize;
             public ShadowFilterMode filterMode;
+            public CascadeBlendMode cascadeBlend;
 
             [Range(1,4)] 
             public int cascadeCount;
@@ -45,6 +51,7 @@ namespace CRP
         {
             atlasSize     = TextureSize._1024,
             filterMode    = ShadowFilterMode.PCF3x3,
+            cascadeBlend  = CascadeBlendMode.Hard,
             cascadeCount  = 4,
             cascadeRatio1 = 0.1f,
             cascadeRatio2 = 0.25f,
