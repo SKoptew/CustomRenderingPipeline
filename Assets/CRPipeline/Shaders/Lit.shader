@@ -13,7 +13,7 @@ Shader "CRP/Lit"
         [Toggle(PREMULTIPLY_ALPHA)] _PreMulAlpha("Premultiply alpha", Float) = 0
         
         [KeywordEnum(Clip, Dither)] _Shadows("Shadows", Float) = 0
-        [Toggle(RECEIVE_SHADOWS)] _ReceiveShadows("Receive shadows", Float) = 1
+        [Toggle(_RECEIVE_SHADOWS)] _ReceiveShadows("Receive shadows", Float) = 1
         
         [Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend ("Src blend", Float) = 1.0
         [Enum(UnityEngine.Rendering.BlendMode)] _DstBlend ("Dst blend", Float) = 1.0        
@@ -42,6 +42,7 @@ Shader "CRP/Lit"
             #pragma shader_feature PREMULTIPLY_ALPHA
             #pragma shader_feature _ _DIRECTIONAL_PCF3 _DIRECTIONAL_PCF5 _DIRECTIONAL_PCF7
             #pragma shader_feature _ _CASCADE_BLEND_SOFT _CASCADE_BLEND_DITHER
+            #pragma shader_feature _RECEIVE_SHADOWS
             //#pragma instancing_options assumeuniformscaling
             
             #pragma vertex   LitPassVertex

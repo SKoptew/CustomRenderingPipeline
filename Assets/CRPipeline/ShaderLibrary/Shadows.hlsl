@@ -126,6 +126,10 @@ float FilterDirectionalShadow(float3 positionSTS)
 
 float GetDirectionalShadowAttenuation(DirectionalShadowData dirShadowData, ShadowData shadowData, SurfaceData surfaceWS)
 {
+    #ifndef _RECEIVE_SHADOWS
+        return 1.0;
+    #endif
+    
     if (dirShadowData.strength <= 0.0)
         return 1.0;
 
