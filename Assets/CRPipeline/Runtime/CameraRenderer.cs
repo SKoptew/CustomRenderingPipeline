@@ -76,7 +76,8 @@ namespace CRP
             var drawingSettings = new DrawingSettings(CRPShaderPassTags.Unlit, sortingSettings)
             {
                 enableDynamicBatching = useDynamicBatching,
-                enableInstancing      = useGPUInstancing
+                enableInstancing      = useGPUInstancing,
+                perObjectData         = PerObjectData.Lightmaps // send lightmapUV data to obj  
             };
             drawingSettings.SetShaderPassName(1, CRPShaderPassTags.CRPLit);
 

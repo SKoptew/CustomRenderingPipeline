@@ -18,15 +18,7 @@ struct Varyings
 };
 //---------------------------------------------------------------------------------------
 
-TEXTURE2D(_ColorTexture);
-SAMPLER(sampler_ColorTexture);
-
-UNITY_INSTANCING_BUFFER_START(UnityPerMaterial)
-    UNITY_DEFINE_INSTANCED_PROP(float4, _ColorTexture_ST)
-    UNITY_DEFINE_INSTANCED_PROP(float4, _Color)
-    UNITY_DEFINE_INSTANCED_PROP(float,  _Cutoff)
-UNITY_INSTANCING_BUFFER_END(UnityPerMaterial)
-
+#include "UnlitInput.hlsl"
 #include "ShadowCasterPassCommon.hlsl"
 
 #endif

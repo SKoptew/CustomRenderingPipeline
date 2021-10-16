@@ -43,6 +43,7 @@ Shader "CRP/Lit"
             #pragma shader_feature _ _DIRECTIONAL_PCF3 _DIRECTIONAL_PCF5 _DIRECTIONAL_PCF7
             #pragma shader_feature _ _CASCADE_BLEND_SOFT _CASCADE_BLEND_DITHER
             #pragma shader_feature _RECEIVE_SHADOWS
+            #pragma multi_compile _ LIGHTMAP_ON
             //#pragma instancing_options assumeuniformscaling
             
             #pragma vertex   LitPassVertex

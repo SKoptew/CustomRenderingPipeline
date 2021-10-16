@@ -20,7 +20,7 @@ Varyings ShadowCasterPassVertex(Attributes IN)
     OUT.positionCS.z = max(OUT.positionCS.z, OUT.positionCS.w * UNITY_NEAR_CLIP_VALUE);
     #endif
     
-    float4 uv_ST = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _ColorTexture_ST);
+    const float4 uv_ST = GetColorTexture_ST();
     OUT.UV = IN.UV * uv_ST.xy + uv_ST.zw;
     
     return OUT;    
@@ -30,15 +30,13 @@ void ShadowCasterPassFragment(Varyings IN)
 {
     UNITY_SETUP_INSTANCE_ID(IN);
     
-    float alphaValue = SAMPLE_TEXTURE2D(_ColorTexture, sampler_ColorTexture, IN.UV).a
-                     * UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _Color).a;    
+    const float alphaValue = SAMPLE_TEXTURE2D(_ColorTexture, sampler_ColorTexture, IN.UV).a * GetColor().a;    
 
     #ifdef _SHADOWS_CLIP
-    float cutoff = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _Cutoff);
-    clip(alphaValue - cutoff);
+        clip(alphaValue - GetCutoff());
     #elif _SHADOWS_DITHER
-    float dither = InterleavedGradientNoise(IN.positionCS.xy, 0);
-    clip(alphaValue - dither);
+        float dither = InterleavedGradientNoise(IN.positionCS.xy, 0);
+        clip(alphaValue - dither);
     #endif
 }
 
