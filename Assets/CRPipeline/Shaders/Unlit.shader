@@ -8,9 +8,11 @@ Shader "CRP/Unlit"
         [Toggle(USE_ALPHA_CLIPPING)] _AlphaClipping("Alpha clipping", Float) = 0
         _Cutoff("Cutoff", Range(0.0, 1.0)) = 0.5
         
-        [Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend ("Src Blend", Float) = 1.0
-        [Enum(UnityEngine.Rendering.BlendMode)] _DstBlend ("Dst Blend", Float) = 1.0        
-        [Enum(Off, 0, On, 1)]                   _ZWrite   ("Z Write"  , Float) = 1.0
+        [KeywordEnum(Clip, Dither)] _Shadows("Shadows", Float) = 0
+        
+        [Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend ("Src blend", Float) = 1.0
+        [Enum(UnityEngine.Rendering.BlendMode)] _DstBlend ("Dst blend", Float) = 1.0        
+        [Enum(Off, 0, On, 1)]                   _ZWrite   ("Z write"  , Float) = 1.0
     }
     
     SubShader
@@ -48,12 +50,12 @@ Shader "CRP/Unlit"
             HLSLPROGRAM
             #pragma target 3.5
             #pragma multi_compile_instancing
-            #pragma shader_feature USE_ALPHA_CLIPPING
+            #pragma shader_feature _ _SHADOWS_CLIP _SHADOWS_DITHER
 
             #pragma vertex   ShadowCasterPassVertex
             #pragma fragment ShadowCasterPassFragment
             
-            #include "ShadowCasterPass.hlsl"
+            #include "UnlitShadowCasterPass.hlsl"
             ENDHLSL
         }
     }

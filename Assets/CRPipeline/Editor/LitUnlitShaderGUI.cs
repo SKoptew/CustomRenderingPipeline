@@ -9,6 +9,11 @@ namespace CRP.Editor
         private MaterialEditor     _editor;
         private Object[]           _materials;
         private MaterialProperty[] _properties;
+
+        public enum ShadowMode
+        {
+            Clip, Dither
+        }
         
         public override void OnGUI(MaterialEditor materialEditor, MaterialProperty[] properties)
         {
@@ -26,7 +31,18 @@ namespace CRP.Editor
         
         private bool Clipping         { set => SetProperty("_AlphaClipping", "USE_ALPHA_CLIPPING", value); }
         private bool PremultiplyAlpha { set => SetProperty("_PreMulAlpha",   "PREMULTIPLY_ALPHA",  value); }
-        
+
+        private ShadowMode Shadows
+        {
+            set
+            {
+                if (SetProperty("_Shadows", (float) value))
+                {
+                    SetKeyword("_SHADOWS_CLIP",   value == ShadowMode.Clip);
+                    SetKeyword("_SHADOWS_DITHER", value == ShadowMode.Dither);
+                }
+            }
+        }
         private BlendMode SrcBlend { set => SetProperty("_SrcBlend", (float) value); }
         private BlendMode DstBlend { set => SetProperty("_DstBlend", (float) value); }
         private bool      ZWrite   { set => SetProperty("_ZWrite", value ? 1f : 0f); }

@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: UnlitAlphaTest
   m_Shader: {fileID: 4800000, guid: 6ccf7d0d155008147a868db5937dd8c9, type: 3}
-  m_ShaderKeywords: USE_ALPHA_CLIPPING _ALPHA_TESTING
+  m_ShaderKeywords: USE_ALPHA_CLIPPING _ALPHA_TESTING _SHADOWS_CLIP
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -63,7 +63,7 @@ Material:
     - _AlphaClipping: 1
     - _AlphaTesting: 1
     - _BumpScale: 1
-    - _Cutoff: 0.6
+    - _Cutoff: 0.557
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _GlossMapScale: 1
@@ -73,6 +73,7 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
+    - _Shadows: 1
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -81,3 +82,4 @@ Material:
     m_Colors:
     - _Color: {r: 0.31996897, g: 0.509434, b: 0.18503025, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+  m_BuildTextureStacks: []
