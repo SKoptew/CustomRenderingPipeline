@@ -14,7 +14,7 @@ float3 GetLighting(SurfaceData surface, BRDFData brdf, LightData light)
 float3 GetLighting(SurfaceData surfaceWS, BRDFData brdf, GI gi)
 {    
     ShadowData shadowData = GetShadowData(surfaceWS.position, surfaceWS.depth);
-    float3 color = 0.0; //gi.diffuse;
+    float3 color = gi.diffuse * brdf.diffuse;
     
     const int dirLightCount = GetDirectionalLightCount();
     for (int i = 0; i < dirLightCount; ++i)

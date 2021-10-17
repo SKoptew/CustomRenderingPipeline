@@ -70,6 +70,22 @@ Shader "CRP/Lit"
             #include "LitShadowCasterPass.hlsl"
             ENDHLSL
         }
+        
+        Pass
+        {
+            Tags { "LightMode" = "Meta" } // for lightmap baking
+            
+            Cull Off
+            
+            HLSLPROGRAM
+            #pragma target 3.5
+            
+            #pragma vertex   LitMetaPassVertex
+            #pragma fragment LitMetaPassFragment
+            
+            #include "LitMetaPass.hlsl"
+            ENDHLSL
+        }
     }
     
     CustomEditor "CRP.Editor.LitUnlitShaderGUI"

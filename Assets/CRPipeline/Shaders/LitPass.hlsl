@@ -14,7 +14,7 @@ struct Attributes
     float3 positionOS : POSITION;
     float3 normalOS   : NORMAL;
     float2 UV         : TEXCOORD0;
-    GI_ATTRIBUTE_DATA
+    GI_ATTRIBUTE_DATA(1)
     UNITY_VERTEX_INPUT_INSTANCE_ID
 };
 
@@ -24,7 +24,7 @@ struct Varyings
     float3 positionWS : TEXCOORD0;
     float3 normalWS   : TEXCOORD1;
     float2 UV         : TEXCOORD2;
-    GI_VARYINGS_DATA
+    GI_VARYINGS_DATA(3)
     UNITY_VERTEX_INPUT_INSTANCE_ID
 };
 
@@ -35,9 +35,9 @@ Varyings LitPassVertex(Attributes IN)
 {
     Varyings OUT;
     
-    UNITY_SETUP_INSTANCE_ID(IN);
+    UNITY_SETUP_INSTANCE_ID   (IN);
     UNITY_TRANSFER_INSTANCE_ID(IN, OUT);
-    TRANSFER_GI_DATA(IN, OUT);
+    TRANSFER_GI_DATA          (IN, OUT);
     
     OUT.positionWS = TransformObjectToWorld(IN.positionOS);
     OUT.positionCS = TransformWorldToHClip(OUT.positionWS);    

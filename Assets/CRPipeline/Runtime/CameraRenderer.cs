@@ -77,7 +77,7 @@ namespace CRP
             {
                 enableDynamicBatching = useDynamicBatching,
                 enableInstancing      = useGPUInstancing,
-                perObjectData         = PerObjectData.Lightmaps // send lightmapUV data to obj  
+                perObjectData         = PerObjectData.Lightmaps // UnityPerDraw: unity_LightmapST, unity_DynamicLightmapST  
             };
             drawingSettings.SetShaderPassName(1, CRPShaderPassTags.CRPLit);
 
