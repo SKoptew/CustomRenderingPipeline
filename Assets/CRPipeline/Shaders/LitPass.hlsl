@@ -59,27 +59,27 @@ float4 LitPassFragment(Varyings IN) : SV_TARGET
     clip(baseColor.a - GetCutoff());
 #endif
     
-    SurfaceData surface;
-    surface.position      = IN.positionWS;
-    surface.normal        = normalize(IN.normalWS);
-    surface.viewDirection = normalize(_WorldSpaceCameraPos - IN.positionWS);
-    surface.depth         = -TransformWorldToView(IN.positionWS).z;
-    surface.color         = baseColor.rgb;
-    surface.alpha         = baseColor.a;
-    surface.metallic      = GetMetallic();
-    surface.smoothness    = GetSmoothness(); // perceptual smoothness
+    SurfaceData surfaceWS;
+    surfaceWS.position      = IN.positionWS;
+    surfaceWS.normal        = normalize(IN.normalWS);
+    surfaceWS.viewDirection = normalize(_WorldSpaceCameraPos - IN.positionWS);
+    surfaceWS.depth         = -TransformWorldToView(IN.positionWS).z;
+    surfaceWS.color         = baseColor.rgb;
+    surfaceWS.alpha         = baseColor.a;
+    surfaceWS.metallic      = GetMetallic();
+    surfaceWS.smoothness    = GetSmoothness(); // perceptual smoothness
 #ifdef _CASCADE_BLEND_DITHER
     surface.dither        = InterleavedGradientNoise(IN.positionCS.xy, 0);
 #endif
     
 #ifdef PREMULTIPLY_ALPHA    
-    BRDFData brdfData = GetBRDFData(surface, true);
+    BRDFData brdfData = GetBRDFData(surfaceWS, true);
 #else
-    BRDFData brdfData = GetBRDFData(surface, false);
+    BRDFData brdfData = GetBRDFData(surfaceWS, false);
 #endif
 
-    GI gi = GetGI(GI_FRAGMENT_DATA(IN));
-    float3 color = GetLighting(surface, brdfData, gi);
+    GI gi = GetGI(GI_FRAGMENT_DATA(IN), surfaceWS);
+    float3 color = GetLighting(surfaceWS, brdfData, gi);
     
     return float4(color, baseColor.a);
 }
